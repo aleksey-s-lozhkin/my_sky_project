@@ -1,0 +1,70 @@
+[project]
+name = "my-sky-project"
+version = "0.1.0"
+description = ""
+authors = [
+    {name = "Aleksey Lozhkin",email = "aleksey.s.lozhkin@gmail.com"}
+]
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "requests (>=2.32.4,<3.0.0)"
+]
+
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.group.lint.dependencies]
+flake8 = "^7.3.0"
+mypy = "^1.17.0"
+black = "^25.1.0"
+isort = "^6.0.1"
+
+[tool.mypy]
+python_version = "3.12"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
+disallow_incomplete_defs = true
+check_untyped_defs = true
+no_implicit_optional = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+warn_no_return = true
+warn_unreachable = true
+strict_equality = true
+
+# Игнорирование ошибок в конкретных модулях
+[[tool.mypy.overrides]]
+module = [
+    "tests.*",    # Игнорировать тесты
+]
+ignore_missing_imports = true
+
+# Исключение файлов/директорий
+exclude = [
+    "^.venv/",
+    "^venv/",
+]
+
+[tool.black]
+line-length = 119
+skip-string-normalization = true
+exclude = '''
+/(
+    \.git
+  | \.venv
+  | venv
+)/
+'''
+
+[tool.isort]
+# максимальная длина строки
+profile = "black"
+line_length = 119
+skip = [".venv", "venv"]
+
+
+
