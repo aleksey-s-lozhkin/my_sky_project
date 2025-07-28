@@ -1,5 +1,7 @@
 from datetime import datetime
+
 from .masks import get_mask_account, get_mask_card_number
+
 
 def mask_account_card(number_str: str) -> str:
     """Функция принимает на вход строку, содержащую тип и номер карты или счета и возвращает строку
