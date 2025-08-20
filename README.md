@@ -28,6 +28,11 @@ git clone https://github.com/aleksey-s-lozhkin/my_sky_project.git
 ```
 pip install -r requirements.txt
 ```
+## Тестирование
+
+Проект использует pytest в качестве фреймворка для тестирования. 
+Все тесты расположены в директории tests/
+
 ## Использование:
 
 Проект находится в разработке
