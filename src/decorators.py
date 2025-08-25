@@ -1,25 +1,39 @@
-from typing import Callable, ParamSpec, TypeVar
+import re
 from datetime import datetime
 from functools import wraps
-
+from typing import Any, Callable, ParamSpec, TypeVar
 
 P = ParamSpec('P')
 T = TypeVar('T')
 
 
-def write_log(log_msg: str, filename: str) -> None:
+def write_log(log_msg: str, filename: str) -> Any:
+    """Вспомогательная функция для записи лога из декоратора log в файл либо вывода его в консоль. Если filename задан,
+    логи записываются в указанный файл. Если filename не задан, логи выводятся в консоль."""
+
     if filename:
-        with open(filename, 'a', encoding='utf-8') as log_file:
-            log_file.write(log_msg)
-    else:
-        print(log_msg)
+        wrong_chars = r'[<>:"/\\|?*\x00-\x1F]'
+        if re.search(wrong_chars, filename):
+            raise ValueError(f"Недопустимые символы в имени файла: {filename}")
+
+    if len(filename) > 255:
+        raise ValueError(f"Слишком длинное имя файла: {filename}")
+
+    try:
+        if filename:
+            with open(filename, 'a', encoding='utf-8') as log_file:
+                log_file.write(log_msg)
+        else:
+            print(log_msg)
+    except Exception as err:
+        return err
 
 
 def log(filename: str = "mylog.txt") -> Callable[[Callable[P, T]], Callable[P, T]]:
     """Декоратор, который автоматически логирует начало и конец выполнения функции, а также ее результаты или возникшие
     ошибки. Декоратор принимает необязательный аргумент filename, который определяет, куда будут записываться логи (в
-    файл или в консоль). Если filename задан, логи записываются в указанный файл. Если filename не задан, логи выводятся
-    в консоль."""
+    файл или в консоль). Если filename задан, логи записываются в указанный файл. Если filename не задан, логи
+    выводятся в консоль."""
 
     def wrapper(func: Callable[P, T]) -> Callable[P, T]:
         @wraps(func)
