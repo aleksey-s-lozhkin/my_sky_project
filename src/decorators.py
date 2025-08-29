@@ -2,6 +2,7 @@ import re
 from datetime import datetime
 from functools import wraps
 from typing import Any, Callable, ParamSpec, TypeVar
+from src.utils import check_filename
 
 P = ParamSpec('P')
 T = TypeVar('T')
@@ -11,13 +12,15 @@ def write_log(log_msg: str, filename: str) -> Any:
     """Вспомогательная функция для записи лога из декоратора log в файл либо вывода его в консоль. Если filename задан,
     логи записываются в указанный файл. Если filename не задан, логи выводятся в консоль."""
 
-    if filename:
-        wrong_chars = r'[<>:"/\\|?*\x00-\x1F]'
-        if re.search(wrong_chars, filename):
-            raise ValueError(f"Недопустимые символы в имени файла: {filename}")
+    # if filename:
+    #     wrong_chars = r'[<>:"/\\|?*\x00-\x1F]'
+    #     if re.search(wrong_chars, filename):
+    #         raise ValueError(f"Недопустимые символы в имени файла: {filename}")
+    #
+    # if len(filename) > 255:
+    #     raise ValueError(f"Слишком длинное имя файла: {filename}")
 
-    if len(filename) > 255:
-        raise ValueError(f"Слишком длинное имя файла: {filename}")
+    filename = check_filename(filename)
 
     try:
         if filename:
