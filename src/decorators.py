@@ -2,10 +2,21 @@ import re
 from datetime import datetime
 from functools import wraps
 from typing import Any, Callable, ParamSpec, TypeVar
-from src.utils import check_filename
 
 P = ParamSpec('P')
 T = TypeVar('T')
+
+
+def check_filename(filename: str) -> str:
+    if filename:
+        wrong_chars = r'[<>:"/\\|?*\x00-\x1F]'
+        if re.search(wrong_chars, filename):
+            raise ValueError(f"Недопустимые символы в имени файла: {filename}")
+
+    if len(filename) > 255:
+        raise ValueError(f"Слишком длинное имя файла: {filename}")
+
+    return filename
 
 
 def write_log(log_msg: str, filename: str) -> Any:
