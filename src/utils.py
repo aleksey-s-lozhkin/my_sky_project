@@ -1,12 +1,14 @@
 import json
+from typing import Any, Dict, List, Union
 
-from src.external_api import currency_convert
 from src.decorators import check_filename
-
-from typing import List, Dict, Any, Union
+from src.external_api import currency_convert
 
 
 def open_json_transactions(filename: str) -> Union[List[Dict[str, Any]], str]:
+    """Функция принимает на вход путь до JSON - файла и возвращает список словарей с данными о финансовых транзакциях.
+    Если файл пустой, содержит не список или не найден, функция возвращает пустой список."""
+
     transaction_json = check_filename(filename)
     try:
         with open(transaction_json, 'r', encoding='utf-8') as data_file:
@@ -25,6 +27,10 @@ def open_json_transactions(filename: str) -> Union[List[Dict[str, Any]], str]:
 
 
 def amount_transactions(transaction: Dict[str, Any], amount: float) -> float:
+    """ Функция принимает на вход транзакцию и возвращает сумму транзакции (amount) в рублях, тип данных — float. Если
+    транзакция была в USD или EUR, происходит обращение к внешнему API для получения текущего курса валют и конвертации
+    суммы операции в рубли. Для конвертации используется Exchange Rates Data API"""
+
     code = transaction.get('operationAmount').get('currency').get('code')
     value = transaction.get('operationAmount').get('amount')
     result = 0
