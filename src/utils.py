@@ -1,7 +1,6 @@
 import json
 from typing import Any, Dict, List, Union
 
-from src.decorators import check_filename
 from src.external_api import currency_convert
 
 
@@ -9,9 +8,8 @@ def open_json_transactions(filename: str) -> Union[List[Dict[str, Any]], str]:
     """Функция принимает на вход путь до JSON - файла и возвращает список словарей с данными о финансовых транзакциях.
     Если файл пустой, содержит не список или не найден, функция возвращает пустой список."""
 
-    transaction_json = check_filename(filename)
     try:
-        with open(transaction_json, 'r', encoding='utf-8') as data_file:
+        with open(filename, 'r', encoding='utf-8') as data_file:
             data_list = list(json.load(data_file))
             if len(data_list) == 0:
                 return ''
@@ -22,21 +20,35 @@ def open_json_transactions(filename: str) -> Union[List[Dict[str, Any]], str]:
         return ''
     except PermissionError:
         return ''
-    except UnicodeDecodeError as err:
+    except UnicodeDecodeError:
         return ''
 
 
-def amount_transactions(transaction: Dict[str, Any], amount: float) -> float:
-    """ Функция принимает на вход транзакцию и возвращает сумму транзакции (amount) в рублях, тип данных — float. Если
+def amount_transactions(transaction: Dict[str, Any], additional_amount: str) -> float:
+    """Функция принимает на вход транзакцию и возвращает сумму транзакции (amount) в рублях, тип данных — float. Если
     транзакция была в USD или EUR, происходит обращение к внешнему API для получения текущего курса валют и конвертации
     суммы операции в рубли. Для конвертации используется Exchange Rates Data API"""
 
-    code = transaction.get('operationAmount').get('currency').get('code')
-    value = transaction.get('operationAmount').get('amount')
-    result = 0
-    if code == 'USD' or code == 'EUR':
-        result = currency_convert(code, value) + amount
-        return result
+    operation_amount = transaction.get('operationAmount', {})
+    if operation_amount == {}:
+        raise KeyError('Key "operationAmount" is missing')
+    currency = operation_amount.get('currency', {})
+    if currency == {}:
+        raise KeyError('Key "currency" is missing')
+    value = operation_amount.get('amount', '')
+    if value == '':
+        raise KeyError('Key "amount" is missing')
+    code = currency.get('code', '')
+    if code == '':
+        raise KeyError('Key "code" is missing')
+
+    transaction_value = float(value)
+    additional_value = float(additional_amount)
+
+    if code in ['USD', 'EUR']:
+        converted_amount = currency_convert(code, value)
+        return converted_amount + additional_value
+    elif code == 'RUB':
+        return transaction_value + additional_value
     else:
-        result = amount + value
-        return result
+        raise ValueError('Currency must be "RUB", "USD" or "EUR"')
