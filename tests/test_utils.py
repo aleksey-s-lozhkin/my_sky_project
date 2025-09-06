@@ -1,12 +1,12 @@
 import os
-import pytest
-
 from unittest.mock import patch
+
+import pytest
 
 from src.utils import amount_transactions, open_json_transactions
 
 
-#Tests for open_json_transactions
+# Tests for open_json_transactions
 def test_valid_json():
     cur_dir = os.path.dirname(os.path.abspath(__file__))
     json_path = os.path.join(cur_dir, 'test.json')
@@ -67,7 +67,7 @@ def test_wrong_json_filenames():
             open_json_transactions(json_path)
 
 
-#Tests for amount_transactions
+# Tests for amount_transactions
 def test_rub_transaction():
     cur_dir = os.path.dirname(os.path.abspath(__file__))
     json_path = os.path.join(cur_dir, 'test.json')

@@ -8,6 +8,8 @@ T = TypeVar('T')
 
 
 def check_filename(filename: str) -> str:
+    """Вспомогательная функция для проверки корректного ввода имени файла"""
+
     if filename:
         wrong_chars = r'[<>:"/\\|?*\x00-\x1F]'
         if re.search(wrong_chars, filename):
@@ -22,14 +24,6 @@ def check_filename(filename: str) -> str:
 def write_log(log_msg: str, filename: str) -> Any:
     """Вспомогательная функция для записи лога из декоратора log в файл либо вывода его в консоль. Если filename задан,
     логи записываются в указанный файл. Если filename не задан, логи выводятся в консоль."""
-
-    # if filename:
-    #     wrong_chars = r'[<>:"/\\|?*\x00-\x1F]'
-    #     if re.search(wrong_chars, filename):
-    #         raise ValueError(f"Недопустимые символы в имени файла: {filename}")
-    #
-    # if len(filename) > 255:
-    #     raise ValueError(f"Слишком длинное имя файла: {filename}")
 
     filename = check_filename(filename)
 

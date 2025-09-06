@@ -2,7 +2,7 @@ import os.path
 
 import pytest
 
-from src.decorators import log, check_filename
+from src.decorators import check_filename, log
 
 
 @log(filename='')

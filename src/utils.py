@@ -6,6 +6,8 @@ from src.external_api import currency_convert
 
 
 def check_json_filename(filename: str) -> str:
+    """Вспомогательная функция для проверки корректного ввода JSON файла с данными о транзакциях"""
+
     if filename:
         wrong_chars = r'[<>:"\\|?*\x00-\x1F]'
         if re.search(wrong_chars, filename):

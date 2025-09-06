@@ -3,7 +3,7 @@ from typing import Union
 
 import requests
 from dotenv import load_dotenv
-from requests.exceptions import ConnectionError, RequestException, Timeout
+from requests.exceptions import ConnectionError, HTTPError, RequestException, Timeout
 
 
 def currency_convert(currency: str, amount: Union[float, int]) -> float:
@@ -20,8 +20,11 @@ def currency_convert(currency: str, amount: Union[float, int]) -> float:
     if currency not in ['USD', 'EUR']:
         raise ValueError('Currency must be "USD" or "EUR"')
 
-    if amount <= 0:
-        raise ValueError('Amount must be more than zero')
+    try:
+        if amount <= 0:
+            raise ValueError('Amount must be more than zero')
+    except TypeError:
+        raise TypeError('Amount must be float or integer')
 
     headers = {"apikey": apilayer_api_key}
     url = f'https://api.apilayer.com/exchangerates_data/convert?to=RUB&from={currency}&amount={str(amount)}'
@@ -29,7 +32,7 @@ def currency_convert(currency: str, amount: Union[float, int]) -> float:
     try:
         response = requests.request("GET", url, headers=headers)
         if response.status_code != 200:
-            raise ConnectionError(f'HTTP Error {response.status_code}')
+            raise HTTPError(f'HTTP Error {response.status_code}')
         get_convert = response.json()
         return float(get_convert['result'])
 
