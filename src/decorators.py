@@ -7,9 +7,8 @@ P = ParamSpec('P')
 T = TypeVar('T')
 
 
-def write_log(log_msg: str, filename: str) -> Any:
-    """Вспомогательная функция для записи лога из декоратора log в файл либо вывода его в консоль. Если filename задан,
-    логи записываются в указанный файл. Если filename не задан, логи выводятся в консоль."""
+def check_filename(filename: str) -> str:
+    """Вспомогательная функция для проверки корректного ввода имени файла"""
 
     if filename:
         wrong_chars = r'[<>:"/\\|?*\x00-\x1F]'
@@ -18,6 +17,15 @@ def write_log(log_msg: str, filename: str) -> Any:
 
     if len(filename) > 255:
         raise ValueError(f"Слишком длинное имя файла: {filename}")
+
+    return filename
+
+
+def write_log(log_msg: str, filename: str) -> Any:
+    """Вспомогательная функция для записи лога из декоратора log в файл либо вывода его в консоль. Если filename задан,
+    логи записываются в указанный файл. Если filename не задан, логи выводятся в консоль."""
+
+    filename = check_filename(filename)
 
     try:
         if filename:

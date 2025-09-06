@@ -2,7 +2,7 @@ import os.path
 
 import pytest
 
-from src.decorators import log, write_log
+from src.decorators import check_filename, log
 
 
 @log(filename='')
@@ -97,4 +97,4 @@ def test_wrong_filenames():
 
     for filename, expected_error in wrong_names:
         with pytest.raises(ValueError, match=expected_error):
-            write_log('', filename)
+            check_filename(filename)
