@@ -6,6 +6,7 @@ from unittest.mock import patch
 from src.utils import amount_transactions, open_json_transactions
 
 
+#Tests for open_json_transactions
 def test_valid_json():
     cur_dir = os.path.dirname(os.path.abspath(__file__))
     json_path = os.path.join(cur_dir, 'test.json')
@@ -23,17 +24,50 @@ def test_valid_json():
 
 
 def test_empty_json():
-    assert open_json_transactions('test_empty.json') == ''
+    cur_dir = os.path.dirname(os.path.abspath(__file__))
+    json_path = os.path.join(cur_dir, 'test_empty.json')
+    assert open_json_transactions(json_path) == ''
 
 
 def test_nonexist_file_json():
-    assert open_json_transactions('nonexist.json') == ''
+    cur_dir = os.path.dirname(os.path.abspath(__file__))
+    json_path = os.path.join(cur_dir, 'nonexist.json')
+    assert open_json_transactions(json_path) == ''
 
 
 def test_invalid_json():
-    assert open_json_transactions('test_wrong.json') == ''
+    cur_dir = os.path.dirname(os.path.abspath(__file__))
+    json_path = os.path.join(cur_dir, 'test_wrong.json')
+    assert open_json_transactions(json_path) == ''
 
 
+def test_incorrect_json():
+    cur_dir = os.path.dirname(os.path.abspath(__file__))
+    json_path = os.path.join(cur_dir, 'test_incorrect.json')
+    assert open_json_transactions(json_path) == ''
+
+
+def test_wrong_json_filenames():
+    wrong_names = [
+        ('file<name.log', "Недопустимые символы"),
+        ('file>name.log', "Недопустимые символы"),
+        ('file:name.log', "Недопустимые символы"),
+        ('file"name.log', "Недопустимые символы"),
+        ('file\\name.log', "Недопустимые символы"),
+        ('file|name.log', "Недопустимые символы"),
+        ('file?name.log', "Недопустимые символы"),
+        ('file*name.log', "Недопустимые символы"),
+        ('a' * 256, "Слишком длинное имя"),
+    ]
+
+    for filename, expected_error in wrong_names:
+        with pytest.raises(ValueError, match=expected_error):
+            cur_dir = os.path.dirname(os.path.abspath(__file__))
+            json_path = os.path.join(cur_dir, filename)
+            open_json_transactions(json_path)
+
+
+#Tests for amount_transactions
 def test_rub_transaction():
     cur_dir = os.path.dirname(os.path.abspath(__file__))
     json_path = os.path.join(cur_dir, 'test.json')
@@ -75,7 +109,7 @@ def test_eur_transaction():
 
 
 def test_wrong_json():
-    wrong_names = [
+    wrong_dicts = [
         (
             {
                 "id": 441945886,
@@ -125,6 +159,39 @@ def test_wrong_json():
         ),
     ]
 
-    for wrong_dict, expected_error in wrong_names:
+    for wrong_dict, expected_error in wrong_dicts:
         with pytest.raises(KeyError, match=expected_error):
+            amount_transactions(wrong_dict, '10000')
+
+
+def test_wrong_currency():
+    wrong_dicts = [
+        (
+            {
+                "id": 441945886,
+                "state": "EXECUTED",
+                "date": "2019-08-26T10:50:58.294041",
+                "operationAmount": {"amount": "20000", "currency": {"name": "руб.", "code": "CNY"}},
+                "description": "Перевод организации",
+                "from": "Maestro 1596837868705199",
+                "to": "Счет 64686473678894779589",
+            },
+            'Currency must be "RUB", "USD" or "EUR"',
+        ),
+        (
+            {
+                "id": 441945886,
+                "state": "EXECUTED",
+                "date": "2019-08-26T10:50:58.294041",
+                "operationAmount": {"amount": "20000", "currency": {"name": "руб.", "code": "BYR"}},
+                "description": "Перевод организации",
+                "from": "Maestro 1596837868705199",
+                "to": "Счет 64686473678894779589",
+            },
+            'Currency must be "RUB", "USD" or "EUR"',
+        ),
+    ]
+
+    for wrong_dict, expected_error in wrong_dicts:
+        with pytest.raises(ValueError, match=expected_error):
             amount_transactions(wrong_dict, '10000')

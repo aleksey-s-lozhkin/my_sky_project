@@ -1,13 +1,27 @@
 import json
+import re
 from typing import Any, Dict, List, Union
 
 from src.external_api import currency_convert
 
 
-def open_json_transactions(filename: str) -> Union[List[Dict[str, Any]], str]:
+def check_json_filename(filename: str) -> str:
+    if filename:
+        wrong_chars = r'[<>:"\\|?*\x00-\x1F]'
+        if re.search(wrong_chars, filename):
+            raise ValueError(f"Недопустимые символы в имени файла: {filename}")
+
+    if len(filename) > 255:
+        raise ValueError(f"Слишком длинное имя файла: {filename}")
+
+    return filename
+
+
+def open_json_transactions(json_path: str) -> Union[List[Dict[str, Any]], str]:
     """Функция принимает на вход путь до JSON - файла и возвращает список словарей с данными о финансовых транзакциях.
     Если файл пустой, содержит не список или не найден, функция возвращает пустой список."""
 
+    filename = check_json_filename(json_path)
     try:
         with open(filename, 'r', encoding='utf-8') as data_file:
             data_list = list(json.load(data_file))
