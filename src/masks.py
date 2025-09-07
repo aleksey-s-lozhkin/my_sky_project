@@ -18,7 +18,7 @@ def setup_module_logger():
         fmt='%(asctime)s - %(name)s - %(levelname)s - %(message)s', datefmt='%Y-%m-%d %H:%M:%S'
     )
 
-    log_file_name = os.path.join(log_dir, 'mask.log')
+    log_file_name = os.path.join(log_dir, 'masks.log')
     file_handler = logging.FileHandler(log_file_name, mode='w', encoding='utf-8')
     file_handler.setLevel(logging.INFO)
     file_handler.setFormatter(formater)
