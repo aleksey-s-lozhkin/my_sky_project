@@ -1,8 +1,9 @@
 import os.path
+from unittest.mock import patch
 
 import pytest
 
-from src.decorators import check_filename, log
+from src.decorators import check_filename, log, write_log
 
 
 @log(filename='')
@@ -98,3 +99,25 @@ def test_wrong_filenames():
     for filename, expected_error in wrong_names:
         with pytest.raises(ValueError, match=expected_error):
             check_filename(filename)
+
+
+@pytest.mark.parametrize(
+    "exception",
+    [
+        PermissionError("Permission denied"),
+        IOError("Disk full"),
+        IsADirectoryError("Is a directory"),
+        FileNotFoundError("No such file or directory"),
+    ],
+)
+def test_exception_write_log(exception):
+    with patch('src.decorators.check_filename') as mock_check:
+        mock_check.return_value = 'test.log'
+
+        with patch('builtins.open') as mock_open:
+            mock_open.side_effect = exception
+
+            result = write_log('test message', 'test.log')
+
+            assert type(result) == type(exception)
+            assert str(result) == str(exception)
