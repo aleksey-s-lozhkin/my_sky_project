@@ -1,6 +1,9 @@
+import os
+from unittest.mock import patch
+
 import pytest
 
-from src.masks import get_mask_account, get_mask_card_number
+from src.masks import get_mask_account, get_mask_card_number, setup_module_logger
 
 
 def test_card_empty():
@@ -47,3 +50,31 @@ def test_card_amount_digit():
 
 def test_account_amount_digit():
     assert get_mask_account('7365410843013587430') == ''
+
+
+@patch('src.masks.os.path.exists')
+@patch('src.masks.os.makedirs')
+def test_create_log_dir(mock_makedirs, mock_exists):
+    mock_exists.return_value = False
+
+    cur_dir = os.path.dirname(os.path.abspath(__file__))
+    project_dir = os.path.dirname(cur_dir)
+    log_dir = os.path.join(project_dir, 'logs')
+    setup_module_logger()
+
+    mock_exists.assert_called_once_with(log_dir)
+    mock_makedirs.assert_called_once_with(log_dir)
+
+
+@patch('src.masks.os.path.exists')
+@patch('src.masks.os.makedirs')
+def test_not_create_log_dir(mock_makedirs, mock_exists):
+    mock_exists.return_value = True
+
+    cur_dir = os.path.dirname(os.path.abspath(__file__))
+    project_dir = os.path.dirname(cur_dir)
+    log_dir = os.path.join(project_dir, 'logs')
+    setup_module_logger()
+
+    mock_exists.assert_called_once_with(log_dir)
+    mock_makedirs.assert_not_called()

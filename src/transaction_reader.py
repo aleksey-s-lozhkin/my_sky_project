@@ -31,5 +31,3 @@ def read_transactions_from_excel(file_path: str, sheet_name: int | str = 0) -> L
 
     except Exception as e:
         raise ValueError(f"Error while reading excel file: {e}")
-
-
