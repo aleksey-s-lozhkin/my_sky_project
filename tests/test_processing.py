@@ -1,3 +1,5 @@
+from pandas.core.sample import sample
+
 from src.processing import filter_by_state, sort_by_date
 
 
@@ -39,3 +41,19 @@ def test_filter_wrong(incorrect_sample):
 
 def test_sort_wrong(incorrect_sample):
     assert sort_by_date(incorrect_sample) == []
+
+
+def test_not_request():
+    assert filter_by_state(None) == []
+
+
+def test_not_state():
+    assert filter_by_state(sample, None) == []
+
+
+def test_not_sorting_data():
+    assert sort_by_date(None) == []
+
+
+def test_not_state():
+    assert sort_by_date(sample, None) == []
