@@ -1,11 +1,8 @@
 import os
-from cgitb import reset
-from unittest.mock import Mock, patch
+from unittest.mock import patch
 
 import pandas as pd
 import pytest
-import requests
-from requests import ConnectionError, RequestException, Timeout
 
 from src.transaction_reader import (
     read_transactions_from_csv,

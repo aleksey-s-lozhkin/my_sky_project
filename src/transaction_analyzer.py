@@ -1,9 +1,9 @@
 import re
-from typing import Any, Dict, List
 from collections import Counter
+from typing import Any, Dict, List
 
 
-def process_bank_search(data: List[Dict[str, Any]], search: str)->List[Dict[str, Any]]:
+def process_bank_search(data: List[Dict[str, Any]], search: str) -> List[Dict[str, Any]]:
     """Функция для поиска в списке словарей операций по заданной строке возвращает список словарей с операциями, у
     которых в описании есть строка, переданная аргументу функции"""
 
@@ -18,7 +18,7 @@ def process_bank_search(data: List[Dict[str, Any]], search: str)->List[Dict[str,
     return sorted_by_description
 
 
-def process_bank_classification(data: List[Dict[str, Any]], classification: List[str])->Dict[str, Any]:
+def process_bank_classification(data: List[Dict[str, Any]], classification: List[str]) -> Dict[str, Any]:
     """Функция для подсчета количества банковских операций определенного типа возвращает словарь, в котором ключи —
     это названия категорий, а значения — это количество операций в каждой категории"""
 

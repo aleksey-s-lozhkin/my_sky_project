@@ -3,7 +3,7 @@ import logging
 import os
 import re
 from functools import wraps
-from typing import Any, Dict, List, Union
+from typing import Any, Dict, List
 
 from src.external_api import currency_convert
 
@@ -74,7 +74,7 @@ def check_json_filename(filename: str) -> str:
 
 
 @log_function_call
-def open_json_transactions(json_path: str) -> Union[List[Dict[str, Any]], str]:
+def open_json_transactions(json_path: str) -> List[Dict[str, Any]]:
     """Функция принимает на вход путь до JSON - файла и возвращает список словарей с данными о финансовых транзакциях.
     Если файл пустой, содержит не список или не найден, функция возвращает пустой список."""
 
@@ -88,26 +88,26 @@ def open_json_transactions(json_path: str) -> Union[List[Dict[str, Any]], str]:
 
                 logger.warning(f'Файл {filename} пустой')
 
-                return ''
+                raise ValueError(f'Файл {filename} пустой')
 
             logger.info(f'Успешно загружено {len(data_list)} транзакций из файла {filename}')
 
             return data_list
     except json.JSONDecodeError:
         logger.error(f'Ошибка декодирования JSON в файле {filename}')
-        return ''
+        raise
 
     except FileNotFoundError:
         logger.error(f'Файл не найден: {filename}')
-        return ''
+        raise
 
     except PermissionError:
         logger.error(f'Нет прав доступа к файлу: {filename}')
-        return ''
+        raise
 
     except UnicodeDecodeError:
         logger.error(f'Ошибка декодирования файла {filename}')
-        return ''
+        raise
 
 
 @log_function_call

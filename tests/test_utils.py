@@ -1,4 +1,6 @@
 import os
+import json
+from json import JSONDecodeError
 from unittest.mock import patch
 
 import pytest
@@ -26,19 +28,22 @@ def test_valid_json():
 def test_empty_json():
     cur_dir = os.path.dirname(os.path.abspath(__file__))
     json_path = os.path.join(cur_dir, 'test_empty.json')
-    assert open_json_transactions(json_path) == ''
+    with pytest.raises(JSONDecodeError, match='Expecting value'):
+        open_json_transactions(json_path)
 
 
 def test_nonexist_file_json():
     cur_dir = os.path.dirname(os.path.abspath(__file__))
     json_path = os.path.join(cur_dir, 'nonexist.json')
-    assert open_json_transactions(json_path) == ''
+    with pytest.raises(FileNotFoundError, match='Файл не найден: nonexist.json'):
+        open_json_transactions(json_path)
 
 
 def test_invalid_json():
     cur_dir = os.path.dirname(os.path.abspath(__file__))
     json_path = os.path.join(cur_dir, 'test_wrong.json')
-    assert open_json_transactions(json_path) == ''
+    with pytest.raises(JSONDecodeError, match='Ошибка декодирования JSON в файле test_wrong.json'):
+        open_json_transactions(json_path)
 
 
 def test_incorrect_json():

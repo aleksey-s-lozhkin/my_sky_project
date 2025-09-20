@@ -69,14 +69,55 @@ transaction_reader.py
 
 ## Установка:
 
+### Вариант 1: С использованием poetry (рекомендуется)
+
 1. Клонируйте репозиторий:
 ```
 git clone https://github.com/aleksey-s-lozhkin/my_sky_project.git
+cd my_sky_project
 ```
-2. Установите зависимости:
+2. Установите poetry (если еще не установлен):
+```
+pip install poetry
+```
+3. Активируйте виртуальное окружение:
+```
+poetry shell
+```
+### Вариант 2: С использованием venv и pip
+
+1. Клонируйте репозиторий:
+```
+git clone https://github.com/aleksey-s-lozhkin/my_sky_project.git
+cd my_sky_project
+```
+2. Создайте виртуальное окружение:
+```
+python -m venv venv
+```
+3. Активируйте виртуальное окружение:
+
+Linux/MacOS:
+```
+source venv/bin/activate
+```
+
+Windows:
+```
+venv\Scripts\activate
+```
+
+4. Установка зависимостей:
 ```
 pip install -r requirements.txt
 ```
+
+## Запуск проекта
+После установки зависимостей
+```
+python main.py
+```
+
 ## Тестирование
 
 Проект использует pytest в качестве фреймворка для тестирования. 
