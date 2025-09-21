@@ -1,5 +1,5 @@
 import os
-import json
+
 from json import JSONDecodeError
 from unittest.mock import patch
 

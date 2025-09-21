@@ -124,7 +124,7 @@ def amount_transactions(transaction: Dict[str, Any], additional_amount: str) -> 
 
     currency = operation_amount.get('currency', {})
 
-    if currency == {}:
+    if not currency:
         logger.error('Отсутствует ключ "currency"')
         raise KeyError('Key "currency" is missing')
 
@@ -133,6 +133,8 @@ def amount_transactions(transaction: Dict[str, Any], additional_amount: str) -> 
     if value == '':
         logger.error('Отсутствует ключ "amount"')
         raise KeyError('Key "amount" is missing')
+    else:
+        value = float(value)
 
     code = currency.get('code', '')
 
@@ -140,7 +142,7 @@ def amount_transactions(transaction: Dict[str, Any], additional_amount: str) -> 
         logger.error('Отсутствует ключ "code"')
         raise KeyError('Key "code" is missing')
 
-    transaction_value = float(value)
+    transaction_value = value
     additional_value = float(additional_amount)
 
     if code in ['USD', 'EUR']:

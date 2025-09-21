@@ -3,6 +3,17 @@ from collections import Counter
 from typing import Any, Dict, List
 
 
+def search_pattern_creator(search: str) ->str:
+    """Вспомогательная функция для подготовки поисковой строки"""
+
+    words_list = re.findall(r'\w+', search)
+
+    if not words_list:
+        return ''
+
+    return '|'.join(words_list)
+
+
 def process_bank_search(data: List[Dict[str, Any]], search: str) -> List[Dict[str, Any]]:
     """Функция для поиска в списке словарей операций по заданной строке возвращает список словарей с операциями, у
     которых в описании есть строка, переданная аргументу функции"""
@@ -12,7 +23,7 @@ def process_bank_search(data: List[Dict[str, Any]], search: str) -> List[Dict[st
     if not search:
         raise ValueError('Search query cannot be empty')
 
-    pattern = re.compile(search, re.IGNORECASE)
+    pattern = re.compile(search_pattern_creator(search), re.IGNORECASE)
     sorted_by_description = [item for item in data if pattern.search(item.get('description', ''))]
 
     return sorted_by_description

@@ -36,4 +36,4 @@ def sort_by_date(sorting_data: List[Dict[str, Any]], sorting_direction: bool = T
         sorted_by_date = sorted(sorting_data, key=lambda x: x['date'], reverse=sorting_direction)
         return sorted_by_date
     else:
-        return []
+        raise KeyError('Not all transactions contain a date. Sorting is not possible.')
