@@ -80,9 +80,7 @@ def main() -> List[Dict[str, Any]] | None:
 
     # Выбор статуса сортировки по дате
     while True:
-        date_status = (
-            input('Отсортировать операции по дате? Да/Нет: ').strip().lower()
-        )
+        date_status = input('Отсортировать операции по дате? Да/Нет: ').strip().lower()
 
         if date_status == 'нет':
             print('Сортировка по дате не будет применена')
@@ -92,10 +90,7 @@ def main() -> List[Dict[str, Any]] | None:
 
             while True:
                 sorting_direction = (
-                    input(
-                        'Отсортировать операции по возрастанию или убыванию? '
-                        'по возрастанию / по убыванию:  '
-                    )
+                    input('Отсортировать операции по возрастанию или убыванию? ' 'по возрастанию / по убыванию:  ')
                     .strip()
                     .lower()
                 )
@@ -117,9 +112,7 @@ def main() -> List[Dict[str, Any]] | None:
     # Выбор статуса вывода только рублевых операций
 
     while True:
-        currency_status = (
-            input('Выводить только рублевые операции? Да/Нет: ').strip().lower()
-        )
+        currency_status = input('Выводить только рублевые операции? Да/Нет: ').strip().lower()
 
         if currency_status == 'нет':
             print('Фильтр по рублевым операциям не будет применен')
@@ -139,12 +132,7 @@ def main() -> List[Dict[str, Any]] | None:
 
     while True:
         process_status = (
-            input(
-                'Отфильтровать список транзакций по определенному слову в описании? '
-                'Да/Нет: '
-            )
-            .strip()
-            .lower()
+            input('Отфильтровать список транзакций по определенному слову в описании? ' 'Да/Нет: ').strip().lower()
         )
 
         if process_status == 'нет':
