@@ -2,9 +2,10 @@ import re
 from datetime import datetime
 
 from .masks import get_mask_account, get_mask_card_number
+from typing import Any
 
 
-def mask_account_card(number_str: str) -> str:
+def mask_account_card(number_str: str | Any) -> str:
     """Функция принимает на вход строку, содержащую тип и номер карты или счета и возвращает строку
     с замаскированным номером. Для карт и счетов используются разные типы маскировки"""
 
@@ -23,6 +24,10 @@ def mask_account_card(number_str: str) -> str:
         (r'^Visa Platinum\s+(\d{16})$', 'Visa Platinum'),
         (r'^Maestro\s+(\d{16})$', 'Maestro'),
         (r'^MasterCard\s+(\d{16})$', 'MasterCard'),
+        (r'^Mastercard\s+(\d{16})$', 'Mastercard'),
+        (r'^Visa\s+(\d{16})$', 'Visa'),
+        (r'^Discover\s+(\d{16})$', 'Discover'),
+        (r'^American Express\s+(\d{16})$', 'American Express'),
     ]
 
     for pattern, card_type in card_patterns:

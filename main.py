@@ -1,15 +1,14 @@
 from collections import Counter
 from typing import Any, Dict, List
 
-from src.processing import sort_by_date
+from src.processing import filter_by_state, sort_by_date
 from src.transaction_analyzer import (
+    get_file_by_drag_and_drop,
     get_transactions_from_file,
     output_handler_json,
     output_handler_xlsx_csv,
     process_bank_search,
 )
-
-# from src.transaction_reader import read_transactions_from_csv, read_transactions_from_excel
 
 
 def main() -> List[Dict[str, Any]] | None:
@@ -40,7 +39,7 @@ def main() -> List[Dict[str, Any]] | None:
         'Для обработки выбран XLSX-файл',
     ]
     print(data_source[int(read_from)])
-    source_file_name = input('Введите путь к файлу с транзакциями: ').strip().lower()
+    source_file_name = get_file_by_drag_and_drop()
 
     list_transaction = get_transactions_from_file(read_from, source_file_name)
     if list_transaction is None:
@@ -48,17 +47,17 @@ def main() -> List[Dict[str, Any]] | None:
         return None
 
     # Выбор статуса интересующих операций
-    state_counter = Counter(item.get('state', 'unknown') for item in list_transaction)
-    unic_state = list(state_counter.keys())
-    unic_state_lower = [item.lower() for item in unic_state]
 
-    print(f'Доступные для фильтровки статусы:{", ".join(unic_state):}')
+    unic_state = ['EXECUTED', 'CANCELED', 'PENDING']
+    unic_state_lower = [str(item).lower() for item in unic_state]
+
+    print(f'Доступные для фильтровки статусы: {", ".join(str(item) for item in unic_state)}')
 
     while True:
         filter_str = (
             input(
                 f'Введите статус, по которому необходимо выполнить фильтрацию \n'
-                f' Доступные для фильтровки статусы: {', '.join(unic_state)}: '
+                f' Доступные для фильтровки статусы: {", ".join(str(item) for item in unic_state)}: '
             )
             .strip()
             .lower()
@@ -70,10 +69,10 @@ def main() -> List[Dict[str, Any]] | None:
             break
         else:
             print(f'Статус операции "{filter_str}" недоступен')
-            print(f'Доступные статусы: {", ".join(unic_state)}')
+            print(f'Доступные статусы: {", ".join(str(item) for item in unic_state)}')
 
     try:
-        sorted_list = process_bank_search(list_transaction, filter_str)
+        sorted_list = filter_by_state(list_transaction, original_status)
 
     except ValueError as err:
         print(f'Ошибка: {err}')
@@ -86,7 +85,7 @@ def main() -> List[Dict[str, Any]] | None:
             print('Сортировка по дате не будет применена')
             break
 
-        if date_status == 'да':
+        elif date_status == 'да':
 
             while True:
                 sorting_direction = (
@@ -99,13 +98,17 @@ def main() -> List[Dict[str, Any]] | None:
                     direction = sorting_direction == 'по убыванию'
                     try:
                         sorted_list = sort_by_date(sorted_list, direction)
+                        print('Сортировка по дате применена')
+                        break
                     except KeyError:
                         print('Не все транзакции содержат дату. Сортировка не возможна.')
                         break
-                    break
 
                 else:
                     print('Выберите направление сортировки')
+
+            break
+
         else:
             print('Введите "да" или "нет"')
 
@@ -139,27 +142,30 @@ def main() -> List[Dict[str, Any]] | None:
             break
 
         if process_status == 'да':
+
             while True:
                 description_counter = Counter(item.get('description', 'unknown') for item in list_transaction)
                 unic_description = list(description_counter.keys())
 
                 search_words = (
                     input(
-                        f'Введите слово или фразу для поиска (quit - для выхода из программы, '
-                        f'пустая строка - отмена фильтрации). Возможные варианты для фильтрации: '
-                        f'{', '.join(unic_description)}: '
+                        f'Введите слово или фразу для поиска (пустая строка - отмена фильтрации). '
+                        f'Возможные варианты для фильтрации: {', '.join(str(desc) for desc in unic_description)}: '
                     )
                     .strip()
                     .lower()
                 )
                 if search_words == '':
+                    print('Фильтрация по словам не будет применена')
                     break
 
                 sorted_list = process_bank_search(sorted_list, search_words)
-
-            if search_words == '':
-                print('Фильтрация по словам не будет применена')
                 break
+
+            break
+
+        else:
+            print('Пожалуйста, введите "да" или "нет"')
 
     # Вывод результатов работы программы
 
@@ -174,8 +180,15 @@ def main() -> List[Dict[str, Any]] | None:
             else:
                 handler = output_handler_json(transaction)
 
-            print(f'{handler[0]} {handler[1]}\n' f'{handler[2]}\n' f'Сумма: {handler[3]} {handler[4]}')
+            print(f'{handler[0]} {handler[1]}\n' f'{handler[2]}\n' f'Сумма: {handler[3]} {handler[4]}', end='\n\n')
     else:
         print('Не найдено ни одной транзакции, подходящей под ваши условия фильтрации')
 
     return sorted_list
+
+
+operation_start = main()
+if operation_start is not None:
+    print('Работа программы завершена успешно')
+else:
+    print('Работа программы вызвала ошибку')

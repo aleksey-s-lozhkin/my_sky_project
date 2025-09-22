@@ -1,6 +1,7 @@
 import logging
 import os
 from functools import wraps
+from typing import Any
 
 
 def setup_module_logger():
@@ -52,7 +53,7 @@ def log_function_call(func):
 
 
 @log_function_call
-def get_mask_card_number(card_number: str) -> str:
+def get_mask_card_number(card_number: str | Any) -> str:
     """Функция принимает на вход номер карты и возвращает ее маску. Номер карты замаскирован и отображается в формате
     XXXX XX** **** XXXX, где X — это цифра номера."""
 
@@ -75,7 +76,7 @@ def get_mask_card_number(card_number: str) -> str:
 
 
 @log_function_call
-def get_mask_account(account_number: str) -> str:
+def get_mask_account(account_number: str | Any) -> str:
     """Функция принимает на вход номер счета и возвращает его маску. Номер счета замаскирован и отображается в формате
     **XXXX, где X — это цифра номера."""
 

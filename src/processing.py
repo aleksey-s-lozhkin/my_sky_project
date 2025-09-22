@@ -10,7 +10,7 @@ def filter_by_state(request: List[Dict[str, Any]], state: str = 'EXECUTED') -> L
 
     count = 0
     for item in request:
-        if item.get('state'):
+        if item.get('state', 'unknown'):
             count += 1
 
     if count == len(request):

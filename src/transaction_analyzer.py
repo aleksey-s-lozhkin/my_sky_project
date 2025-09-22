@@ -1,5 +1,7 @@
 import json
+import os
 import re
+import sys
 from collections import Counter
 from typing import Any, Dict, List
 
@@ -29,7 +31,7 @@ def process_bank_search(data: List[Dict[str, Any]], search: str) -> List[Dict[st
         raise ValueError('Search query cannot be empty')
 
     pattern = re.compile(search_pattern_creator(search), re.IGNORECASE)
-    sorted_by_description = [item for item in data if pattern.search(item.get('description', ''))]
+    sorted_by_description = [item for item in data if pattern.search(str(item.get('description', '')))]
 
     return sorted_by_description
 
@@ -50,6 +52,27 @@ def process_bank_classification(data: List[Dict[str, Any]], classification: List
     return dict(statistics_dict)
 
 
+def get_file_by_drag_and_drop():
+    """Получает путь к файлу через перетаскивание в консоль"""
+
+    if len(sys.argv) > 1:
+        file_path = sys.argv[1]
+        if os.path.exists(file_path):
+            return file_path
+        else:
+            print(f"Файл не найден: {file_path}")
+            return None
+
+    print("Перетащите файл в окно терминала и нажмите Enter")
+    file_path = input("Или введите путь к файлу: ").strip().strip('"')
+
+    if os.path.exists(file_path):
+        return file_path
+    else:
+        print(f"Файл не найден: {file_path}")
+        return None
+
+
 def get_transactions_from_file(read_from: str, source_file_name: str) -> List[Dict[str, Any]] | None:
     """Функция читает транзакции из файла в зависимости от выбранного формата '1' - JSON, '2' - CSV, '3' - XLSX.
     Возвращает: Список транзакций или None в случае ошибки"""
@@ -57,7 +80,7 @@ def get_transactions_from_file(read_from: str, source_file_name: str) -> List[Di
     if read_from == '1':
         json_path = source_file_name
         try:
-            return open_json_transactions(json_path)
+            return list(open_json_transactions(json_path))
         except json.JSONDecodeError:
             print(f'Error decoding JSON in the file: {json_path}')
         except FileNotFoundError:
@@ -105,7 +128,7 @@ def output_handler_json(transaction: Dict[str, Any]) -> list[Any]:
     else:
         result.append(raw_date)
 
-    result.append(transaction.get('state', 'unknown'))
+    result.append(transaction.get('description', 'unknown'))
 
     from_value = transaction.get('from', '')
     to_value = transaction.get('to', 'unknown')
@@ -135,11 +158,12 @@ def output_handler_xlsx_csv(transaction: Dict[str, Any]) -> list[Any]:
     else:
         result.append(raw_date)
 
-    result.append(transaction.get('state', 'unknown'))
+    result.append(transaction.get('description', 'unknown'))
 
-    from_value = transaction.get('from', '')
+    from_value = transaction.get('from')
     to_value = transaction.get('to', 'unknown')
-    if not from_value == '':
+
+    if not from_value != from_value:
         result.append(f'{mask_account_card(from_value)} -> {mask_account_card(to_value)}')
     else:
         result.append(f'{mask_account_card(to_value)}')
