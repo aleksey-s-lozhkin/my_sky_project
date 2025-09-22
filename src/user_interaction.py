@@ -1,10 +1,10 @@
 from collections import Counter
 from typing import Any, Dict, List
 
-from output_handler import output_handler_json, output_handler_xlsx_csv
-from processing import sort_by_date
+from src.output_handler import output_handler_json, output_handler_xlsx_csv
+from src.processing import sort_by_date
 from src.get_transactions import get_file_by_drag_and_drop, get_transactions_from_file
-from transaction_analyzer import process_bank_search
+from src.transaction_analyzer import process_bank_search
 
 
 def select_data_source() -> str:
