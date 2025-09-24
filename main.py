@@ -37,7 +37,7 @@ def main() -> List[Dict[str, Any]] | None:
     # Применение различных фильтров и сортировок
     sorted_list = apply_date_sorting(sorted_list)
     sorted_list = filter_rub_operations(sorted_list)
-    sorted_list = filter_by_description(sorted_list, list_transaction)
+    sorted_list = filter_by_description(sorted_list)
 
     # Вывод результатов
     display_results(sorted_list, read_from)

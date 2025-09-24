@@ -93,7 +93,7 @@ def open_json_transactions(json_path: str) -> List[Dict[str, Any]]:
             logger.info(f'Успешно загружено {len(data_list)} транзакций из файла {filename}')
 
             return data_list
-    except json.JSONDecodeError as err:
+    except json.JSONDecodeError:
         logger.error(f'Ошибка декодирования JSON в файле {filename}')
         raise
 

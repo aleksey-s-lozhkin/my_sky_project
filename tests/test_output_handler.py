@@ -1,7 +1,7 @@
 import math
 from unittest.mock import patch
 
-from src. output_handler import output_handler_json, output_handler_xlsx_csv
+from src.output_handler import output_handler_json, output_handler_xlsx_csv
 
 
 @patch('src.output_handler.mask_account_card')
@@ -12,21 +12,21 @@ def test_output_handler_json(mock_date, mock_mask):
         'description': '200',
         'from': '300',
         'to': '400',
-        'operationAmount': {'amount':'500','currency': {'name': '600'}},
+        'operationAmount': {'amount': '500', 'currency': {'name': '600'}},
     }
     test_data2 = {
         'date': '100',
         'description': '200',
         'from': '',
         'to': '400',
-        'operationAmount': {'amount':'500','currency': {'name': '600'}},
+        'operationAmount': {'amount': '500', 'currency': {'name': '600'}},
     }
     test_data3 = {
         'date': 'unknown',
         'description': '200',
         'from': '',
         'to': '400',
-        'operationAmount': {'amount':'500','currency': {'name': '600'}},
+        'operationAmount': {'amount': '500', 'currency': {'name': '600'}},
     }
 
     mock_mask.return_value = '222'

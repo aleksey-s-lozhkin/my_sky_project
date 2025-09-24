@@ -1,9 +1,8 @@
-from collections import Counter
 from typing import Any, Dict, List
 
+from src.get_transactions import get_file_by_drag_and_drop, get_transactions_from_file
 from src.output_handler import output_handler_json, output_handler_xlsx_csv
 from src.processing import sort_by_date
-from src.get_transactions import get_file_by_drag_and_drop, get_transactions_from_file
 from src.transaction_analyzer import process_bank_search
 
 
@@ -123,9 +122,7 @@ def filter_rub_operations(sorted_list: List[Dict[str, Any]]) -> List[Dict[str, A
         print('Введите "да" или "нет"')
 
 
-def filter_by_description(
-    sorted_list: List[Dict[str, Any]], all_transactions: List[Dict[str, Any]]
-) -> List[Dict[str, Any]]:
+def filter_by_description(sorted_list: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
     """Фильтрация по описанию"""
 
     while True:
@@ -140,9 +137,9 @@ def filter_by_description(
 
             search_words = (
                 input(
-                    f'Введите слово или фразу для поиска (пустая строка - отмена фильтрации). '
-                    f'Возможные варианты для фильтрации: \nПеревод организации, \nПеревод с карты на карту, '
-                    f'\nОткрытие вклада, \nПеревод со счета на счет: '
+                    'Введите слово или фразу для поиска (пустая строка - отмена фильтрации). '
+                    'Возможные варианты для фильтрации: \nПеревод организации, \nПеревод с карты на карту, '
+                    '\nОткрытие вклада, \nПеревод со счета на счет: '
                 )
                 .strip()
                 .lower()

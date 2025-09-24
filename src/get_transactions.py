@@ -43,7 +43,7 @@ def get_transactions_from_file(read_from: str, source_file_name: str) -> List[Di
         csv_path = source_file_name
         try:
             return read_transactions_from_csv(csv_path)
-        except (FileNotFoundError,  Exception):
+        except (FileNotFoundError, Exception):
             return None
 
     elif read_from == '3':
