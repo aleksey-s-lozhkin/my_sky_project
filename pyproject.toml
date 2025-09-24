@@ -74,5 +74,10 @@ skip = [".venv", "venv"]
 [tool.poetry.scripts]
 export-requirements = "poetry export -f requirements.txt --output requirements.txt --without-hashes"
 
-
+[tool.pytest.ini_options]
+addopts = "--cov=src --cov-report=html --cov-report=term --cov-fail-under=80"
+testpaths = ["tests"]
+python_files = "test_*.py"
+python_classes = "Test*"
+python_functions = "test_*"
 

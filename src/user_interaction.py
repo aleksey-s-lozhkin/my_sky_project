@@ -137,13 +137,12 @@ def filter_by_description(
             return sorted_list
 
         if process_status == 'да':
-            description_counter = Counter(item.get('description', 'unknown') for item in all_transactions)
-            unic_description = list(description_counter.keys())
 
             search_words = (
                 input(
                     f'Введите слово или фразу для поиска (пустая строка - отмена фильтрации). '
-                    f'Возможные варианты для фильтрации: {", ".join(str(desc) for desc in unic_description)}: '
+                    f'Возможные варианты для фильтрации: \nПеревод организации, \nПеревод с карты на карту, '
+                    f'\nОткрытие вклада, \nПеревод со счета на счет: '
                 )
                 .strip()
                 .lower()

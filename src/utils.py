@@ -93,17 +93,17 @@ def open_json_transactions(json_path: str) -> List[Dict[str, Any]]:
             logger.info(f'Успешно загружено {len(data_list)} транзакций из файла {filename}')
 
             return data_list
-    except json.JSONDecodeError:
+    except json.JSONDecodeError as err:
         logger.error(f'Ошибка декодирования JSON в файле {filename}')
         raise
 
     except FileNotFoundError:
         logger.error(f'Файл не найден: {filename}')
-        raise
+        raise FileNotFoundError(f"'Файл не найден: {filename}")
 
     except PermissionError:
         logger.error(f'Нет прав доступа к файлу: {filename}')
-        raise
+        raise PermissionError(f'Нет прав доступа к файлу: {filename}')
 
     except UnicodeDecodeError:
         logger.error(f'Ошибка декодирования файла {filename}')

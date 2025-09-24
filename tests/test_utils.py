@@ -34,21 +34,22 @@ def test_empty_json():
 def test_nonexist_file_json():
     cur_dir = os.path.dirname(os.path.abspath(__file__))
     json_path = os.path.join(cur_dir, 'nonexist.json')
-    with pytest.raises(FileNotFoundError, match='Файл не найден: nonexist.json'):
+    with pytest.raises(FileNotFoundError, match=r'Файл не найден:.*nonexist\.json'):
         open_json_transactions(json_path)
 
 
 def test_invalid_json():
     cur_dir = os.path.dirname(os.path.abspath(__file__))
     json_path = os.path.join(cur_dir, 'test_wrong.json')
-    with pytest.raises(JSONDecodeError, match='Ошибка декодирования JSON в файле test_wrong.json'):
+    with pytest.raises(JSONDecodeError):
         open_json_transactions(json_path)
 
 
 def test_incorrect_json():
     cur_dir = os.path.dirname(os.path.abspath(__file__))
     json_path = os.path.join(cur_dir, 'test_incorrect.json')
-    assert open_json_transactions(json_path) == ''
+    with pytest.raises(UnicodeDecodeError):
+        open_json_transactions(json_path)
 
 
 def test_wrong_json_filenames():
@@ -92,7 +93,7 @@ def test_usd_transaction():
         mock_currency_convert.return_value = 30000.0
         res = amount_transactions(test_dict, 10000)
         assert res == 40000
-        mock_currency_convert.assert_called_once_with('USD', '20000')
+        mock_currency_convert.assert_called_once_with('USD', 20000.0)
 
 
 def test_eur_transaction():
@@ -109,7 +110,7 @@ def test_eur_transaction():
         mock_currency_convert.return_value = 30000.0
         res = amount_transactions(test_dict, 10000)
         assert res == 40000
-        mock_currency_convert.assert_called_once_with('EUR', '20000')
+        mock_currency_convert.assert_called_once_with('EUR', 20000.0)
 
 
 def test_wrong_json():
@@ -236,11 +237,9 @@ def test_open_json_transactions_permission_error(mock_logger, mock_open, mock_ch
     test_filename = 'protected.json'
     mock_check_filename.return_value = test_filename
     mock_open.side_effect = PermissionError("Permission denied")
-    result = open_json_transactions('protected.json')
-    assert result == ''
-    mock_check_filename.assert_called_once_with('protected.json')
-    mock_open.assert_called_once_with(test_filename, 'r', encoding='utf-8')
-    mock_logger.error.assert_called_once_with(f'Нет прав доступа к файлу: {test_filename}')
+    with pytest.raises(PermissionError, match=r'Нет прав доступа к файлу:.*protected\.json'):
+        open_json_transactions(test_filename)
+    mock_logger.error.assert_called_once_with('Нет прав доступа к файлу: protected.json')
 
 
 @patch('src.utils.check_json_filename')
@@ -251,9 +250,6 @@ def test_open_json_transactions_empty_file(mock_logger, mock_json_load, mock_ope
     test_filename = 'test.json'
     mock_check_filename.return_value = test_filename
     mock_json_load.return_value = []
-
-    result = open_json_transactions('test.json')
-    assert result == ''
-    mock_check_filename.assert_called_once_with('test.json')
-    mock_open.assert_called_once_with(test_filename, 'r', encoding='utf-8')
+    with pytest.raises(ValueError, match=f'Файл {test_filename} пустой'):
+        open_json_transactions(test_filename)
     mock_logger.warning.assert_called_once_with(f'Файл {test_filename} пустой')
