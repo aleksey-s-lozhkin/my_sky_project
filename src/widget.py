@@ -28,6 +28,7 @@ def mask_account_card(number_str: str | Any) -> str:
         (r'^Visa\s+(\d{16})$', 'Visa'),
         (r'^Discover\s+(\d{16})$', 'Discover'),
         (r'^American Express\s+(\d{16})$', 'American Express'),
+        (r'^МИР\s+(\d{16})$', 'МИР'),
     ]
 
     for pattern, card_type in card_patterns:
