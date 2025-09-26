@@ -1,3 +1,4 @@
+import pytest
 from pandas.core.sample import sample
 
 from src.processing import filter_by_state, sort_by_date
@@ -40,7 +41,8 @@ def test_filter_wrong(incorrect_sample):
 
 
 def test_sort_wrong(incorrect_sample):
-    assert sort_by_date(incorrect_sample) == []
+    with pytest.raises(KeyError, match='Not all transactions contain a date. Sorting is not possible.'):
+        sort_by_date(incorrect_sample)
 
 
 def test_not_request():

@@ -8,16 +8,7 @@ def filter_by_state(request: List[Dict[str, Any]], state: str = 'EXECUTED') -> L
     if not request or not state:
         return []
 
-    count = 0
-    for item in request:
-        if item.get('state'):
-            count += 1
-
-    if count == len(request):
-        sorted_by_state = [item for item in request if item.get('state') == state]
-        return sorted_by_state
-    else:
-        return []
+    return [item for item in request if item.get('state') == state]
 
 
 def sort_by_date(sorting_data: List[Dict[str, Any]], sorting_direction: bool = True) -> List[Dict[str, Any]]:
@@ -36,4 +27,4 @@ def sort_by_date(sorting_data: List[Dict[str, Any]], sorting_direction: bool = T
         sorted_by_date = sorted(sorting_data, key=lambda x: x['date'], reverse=sorting_direction)
         return sorted_by_date
     else:
-        return []
+        raise KeyError('Not all transactions contain a date. Sorting is not possible.')

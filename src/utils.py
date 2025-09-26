@@ -3,7 +3,7 @@ import logging
 import os
 import re
 from functools import wraps
-from typing import Any, Dict, List, Union
+from typing import Any, Dict, List
 
 from src.external_api import currency_convert
 
@@ -74,7 +74,7 @@ def check_json_filename(filename: str) -> str:
 
 
 @log_function_call
-def open_json_transactions(json_path: str) -> Union[List[Dict[str, Any]], str]:
+def open_json_transactions(json_path: str) -> List[Dict[str, Any]]:
     """Функция принимает на вход путь до JSON - файла и возвращает список словарей с данными о финансовых транзакциях.
     Если файл пустой, содержит не список или не найден, функция возвращает пустой список."""
 
@@ -88,26 +88,26 @@ def open_json_transactions(json_path: str) -> Union[List[Dict[str, Any]], str]:
 
                 logger.warning(f'Файл {filename} пустой')
 
-                return ''
+                raise ValueError(f'Файл {filename} пустой')
 
             logger.info(f'Успешно загружено {len(data_list)} транзакций из файла {filename}')
 
             return data_list
     except json.JSONDecodeError:
         logger.error(f'Ошибка декодирования JSON в файле {filename}')
-        return ''
+        raise
 
     except FileNotFoundError:
         logger.error(f'Файл не найден: {filename}')
-        return ''
+        raise FileNotFoundError(f"'Файл не найден: {filename}")
 
     except PermissionError:
         logger.error(f'Нет прав доступа к файлу: {filename}')
-        return ''
+        raise PermissionError(f'Нет прав доступа к файлу: {filename}')
 
     except UnicodeDecodeError:
         logger.error(f'Ошибка декодирования файла {filename}')
-        return ''
+        raise
 
 
 @log_function_call
@@ -124,7 +124,7 @@ def amount_transactions(transaction: Dict[str, Any], additional_amount: str) -> 
 
     currency = operation_amount.get('currency', {})
 
-    if currency == {}:
+    if not currency:
         logger.error('Отсутствует ключ "currency"')
         raise KeyError('Key "currency" is missing')
 
@@ -133,6 +133,8 @@ def amount_transactions(transaction: Dict[str, Any], additional_amount: str) -> 
     if value == '':
         logger.error('Отсутствует ключ "amount"')
         raise KeyError('Key "amount" is missing')
+    else:
+        value = float(value)
 
     code = currency.get('code', '')
 
@@ -140,7 +142,7 @@ def amount_transactions(transaction: Dict[str, Any], additional_amount: str) -> 
         logger.error('Отсутствует ключ "code"')
         raise KeyError('Key "code" is missing')
 
-    transaction_value = float(value)
+    transaction_value = value
     additional_value = float(additional_amount)
 
     if code in ['USD', 'EUR']:
